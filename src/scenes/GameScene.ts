@@ -1,9 +1,12 @@
 import Phaser from 'phaser';
 
+import { Player } from '../entities/player/Player';
 import { GameStateManager } from '../systems/state/GameStateManager';
 
 export class GameScene extends Phaser.Scene {
   private gameStateManager!: GameStateManager;
+
+  private player!: Player;
 
   constructor() {
     super('GameScene');
@@ -18,35 +21,38 @@ export class GameScene extends Phaser.Scene {
 
     console.log('[GameState] Initial state:', state);
 
+    this.physics.world.setBounds(
+      0,
+      0,
+      this.scale.width,
+      this.scale.height,
+    );
+
+    this.player = new Player(this, state.player);
+
+    console.log(
+      '[Player] Spawned at:',
+      this.player.x,
+      this.player.y,
+    );
+
     this.add
-      .text(640, 200, 'GAME SCENE', {
+      .text(640, 100, 'GAME SCENE', {
         fontSize: '48px',
         color: '#ffffff',
       })
       .setOrigin(0.5);
 
     this.add
-      .image(640, 320, 'placeholder')
-      .setScale(4);
-
-    this.add
       .text(
         640,
-        420,
-        `Area: ${state.world.currentArea}\nLevel: ${state.player.level}\nHP: ${state.player.hp}`,
+        650,
+        `Area: ${state.world.currentArea} | Level: ${state.player.level} | HP: ${state.player.hp}`,
         {
-          fontSize: '24px',
+          fontSize: '20px',
           color: '#cccccc',
-          align: 'center',
         },
       )
-      .setOrigin(0.5);
-
-    this.add
-      .text(640, 520, 'Runtime state initialized', {
-        fontSize: '24px',
-        color: '#ffffff',
-      })
       .setOrigin(0.5);
   }
 }
