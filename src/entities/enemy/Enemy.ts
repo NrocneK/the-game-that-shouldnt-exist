@@ -2,8 +2,11 @@ import Phaser from 'phaser';
 
 import type { EnemyState } from '../../types/EnemyState';
 import type { CombatStats } from '../../types/combat/CombatStats';
+import type { Damageable } from '../../types/combat/Damageable';
 
-export class Enemy extends Phaser.Physics.Arcade.Sprite {
+export class Enemy
+    extends Phaser.Physics.Arcade.Sprite
+    implements Damageable {
     private readonly enemyId: string;
 
     private hp: number;
@@ -50,5 +53,22 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     public getCombatStats(): CombatStats {
         return this.combatStats;
+    }
+
+    public takeDamage(amount: number): void {
+        if (this.isDefeated()) {
+            return;
+        }
+
+        const damage = Math.max(0, amount);
+
+        this.hp = Math.max(
+            0,
+            this.hp - damage,
+        );
+    }
+
+    public isDefeated(): boolean {
+        return this.hp <= 0;
     }
 }
