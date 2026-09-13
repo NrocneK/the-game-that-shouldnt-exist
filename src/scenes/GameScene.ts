@@ -5,6 +5,7 @@ import { GameStateManager } from '../systems/state/GameStateManager';
 import { MovementSystem } from '../systems/movement/MovementSystem';
 import { CameraSystem } from '../systems/world/CameraSystem';
 
+
 export class GameScene extends Phaser.Scene {
   private gameStateManager!: GameStateManager;
   private movementSystem!: MovementSystem;
@@ -129,6 +130,7 @@ export class GameScene extends Phaser.Scene {
     );
 
     this.player = new Player(this, state.player);
+
 
     this.physics.add.overlap(
       this.player,
