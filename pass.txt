@@ -6,8 +6,6 @@ Administrator@Ken MINGW64 /d/Ken/Project/ChatGPT/RPG/the-game-that-shouldnt-exis
 
 $ npx tsc --noEmit
 
-
-
 Administrator@Ken MINGW64 /d/Ken/Project/ChatGPT/RPG/the-game-that-shouldnt-exist (master)
 $ npm run build
 
@@ -20,23 +18,12 @@ computing gzip size...
 dist/index.html                    0.38 kB │ gzip:   0.28 kB
 dist/assets/index-uEnhxhPi.js  1,377.41 kB │ gzip: 358.75 kB
 
-✓ built in 1.03s
-[plugin builtin:vite-reporter] 
-(!) Some chunks are larger than 500 kB after minification. Consider:
-- Using dynamic import() to code-split the application
-- Use build.rolldownOptions.output.codeSplitting to improve chunking: https://rolldown.rs/reference/OutputOptions.codeSplitting
-- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
-
-
+✓ built in 3.88s
 
 Administrator@Ken MINGW64 /d/Ken/Project/ChatGPT/RPG/the-game-that-shouldnt-exist (master)
-
-$ git log --oneline -4
-
-4e0a787 (HEAD -> master) feat: add runtime state foundation
-
+$ git log --oneline -5
+95c25ca (HEAD -> master) refactor: establish module architecture
+4e0a787 feat: add runtime state foundation
 d097a02 feat: add asset pipeline foundation
-
 1b21515 feat: add phaser scene lifecycle
-
 0cf854f chore: initialize game project
