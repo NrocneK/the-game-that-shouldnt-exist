@@ -3,12 +3,54 @@ import Phaser from 'phaser';
 import { Player } from '../entities/player/Player';
 import { GameStateManager } from '../systems/state/GameStateManager';
 import { MovementSystem } from '../systems/movement/MovementSystem';
+import { CameraSystem } from '../systems/world/CameraSystem';
 
 export class GameScene extends Phaser.Scene {
   private gameStateManager!: GameStateManager;
   private movementSystem!: MovementSystem;
 
   private player!: Player;
+
+  private showPrototypeComplete(): void {
+    this.movementSystem.disable();
+
+    this.add
+      .rectangle(
+        this.scale.width / 2,
+        this.scale.height / 2,
+        700,
+        300,
+        0x000000,
+        0.9,
+      )
+      .setScrollFactor(0);
+
+    this.add
+      .text(
+        this.scale.width / 2,
+        this.scale.height / 2 - 40,
+        'PROTOTYPE COMPLETE',
+        {
+          fontSize: '42px',
+          color: '#ffffff',
+        },
+      )
+      .setOrigin(0.5)
+      .setScrollFactor(0);
+
+    this.add
+      .text(
+        this.scale.width / 2,
+        this.scale.height / 2 + 30,
+        'Phase 1 First Playable Build',
+        {
+          fontSize: '24px',
+          color: '#cccccc',
+        },
+      )
+      .setOrigin(0.5)
+      .setScrollFactor(0);
+  }
 
   constructor() {
     super('GameScene');
@@ -44,11 +86,66 @@ export class GameScene extends Phaser.Scene {
 
     const ground = this.physics.add.staticGroup();
 
+    const goalX = 2200;
+
+    this.add
+      .rectangle(
+        goalX,
+        600,
+        80,
+        160,
+        0x444444,
+      );
+
+    this.add
+      .text(
+        goalX,
+        500,
+        'END',
+        {
+          fontSize: '32px',
+          color: '#ffffff',
+        },
+      )
+      .setOrigin(0.5);
+
     for (let x = 16; x < worldWidth; x += 32) {
       ground.create(x, 700, 'ground');
     }
 
+    const goalZone = this.add
+      .rectangle(
+        goalX,
+        600,
+        100,
+        180,
+        0xffffff,
+        0.15,
+      );
+
+    this.physics.add.existing(
+      goalZone,
+      true,
+    );
+
     this.player = new Player(this, state.player);
+
+    this.physics.add.overlap(
+      this.player,
+      goalZone,
+      () => {
+        console.log('[Game] Prototype completed.');
+
+        this.showPrototypeComplete();
+      },
+    );
+
+    new CameraSystem(
+      this,
+      this.player,
+      worldWidth,
+      worldHeight,
+    );
 
     this.movementSystem = new MovementSystem(
       this,
@@ -81,9 +178,25 @@ export class GameScene extends Phaser.Scene {
         },
       )
       .setOrigin(0.5);
+
+    this.add
+      .text(
+        20,
+        20,
+        '← → Move    SPACE Jump',
+        {
+          fontSize: '20px',
+          color: '#ffffff',
+        },
+      )
+      .setScrollFactor(0);
+
   }
+
+
 
   update(): void {
     this.movementSystem.update();
   }
+
 }

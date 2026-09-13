@@ -13,6 +13,8 @@ export class MovementSystem {
 
   private readonly jumpVelocity = -500;
 
+  private enabled = true;
+
   constructor(scene: Phaser.Scene, player: Player) {
     this.player = player;
 
@@ -24,8 +26,20 @@ export class MovementSystem {
   }
 
   public update(): void {
+    if (!this.enabled) {
+      return;
+    }
+
     this.handleHorizontalMovement();
     this.handleJump();
+  }
+
+  public disable(): void {
+    this.enabled = false;
+
+    const body = this.player.body as Phaser.Physics.Arcade.Body;
+
+    body.setVelocity(0, 0);
   }
 
   private handleHorizontalMovement(): void {

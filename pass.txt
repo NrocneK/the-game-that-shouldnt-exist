@@ -1,29 +1,9 @@
-STEP 1.4 — PASS  
+Bag Store
+https://my-bagstore.vercel.app/
 
+My HRMS
+https://my-hrms-one.vercel.app/
 
+WMS Pro
+https://wms-pro-pnr.vercel.app/
 
-Administrator@Ken MINGW64 /d/Ken/Project/ChatGPT/RPG/the-game-that-shouldnt-exist (master)
-
-$ npx tsc --noEmit
-
-Administrator@Ken MINGW64 /d/Ken/Project/ChatGPT/RPG/the-game-that-shouldnt-exist (master)
-$ npm run build
-
-> the-game-that-shouldnt-exist@0.0.0 build
-> tsc && vite build
-
-vite v8.3.0 building client environment for production...
-✓ 11 modules transformed.
-computing gzip size...
-dist/index.html                    0.38 kB │ gzip:   0.28 kB
-dist/assets/index-uEnhxhPi.js  1,377.41 kB │ gzip: 358.75 kB
-
-✓ built in 3.88s
-
-Administrator@Ken MINGW64 /d/Ken/Project/ChatGPT/RPG/the-game-that-shouldnt-exist (master)
-$ git log --oneline -5
-95c25ca (HEAD -> master) refactor: establish module architecture
-4e0a787 feat: add runtime state foundation
-d097a02 feat: add asset pipeline foundation
-1b21515 feat: add phaser scene lifecycle
-0cf854f chore: initialize game project
