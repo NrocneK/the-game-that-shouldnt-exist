@@ -7,11 +7,12 @@ export interface EnemyState {
     };
 
     hp: number;
-
     maxHp: number;
 
     combatStats: {
         attack: number;
         defense: number;
     };
+
+    experienceReward: number;
 }

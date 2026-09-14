@@ -6,12 +6,17 @@ import { GameStateManager } from '../systems/state/GameStateManager';
 import { MovementSystem } from '../systems/movement/MovementSystem';
 import { CameraSystem } from '../systems/world/CameraSystem';
 import { PlayerCombatSystem } from '../systems/combat/PlayerCombatSystem';
+import { ProgressionSystem } from '../systems/progression/ProgressionSystem';
+import type { ProgressionState } from '../types/progression/ProgressionState';
 
 
 export class GameScene extends Phaser.Scene {
   private gameStateManager!: GameStateManager;
   private movementSystem!: MovementSystem;
   private playerCombatSystem!: PlayerCombatSystem;
+  private progressionSystem!: ProgressionSystem;
+  private progressionState!: ProgressionState;
+  private progressionText!: Phaser.GameObjects.Text;
 
   private player!: Player;
   private enemies: Enemy[] = [];
@@ -67,6 +72,27 @@ export class GameScene extends Phaser.Scene {
     this.gameStateManager = new GameStateManager();
 
     const state = this.gameStateManager.getState();
+
+    this.progressionState = {
+      level: state.player.level,
+      experience: state.player.experience,
+      experienceToNextLevel: 100,
+
+      stats: {
+        maxHp: state.player.stats.maxHp,
+        attack: state.player.stats.attack,
+        defense: state.player.stats.defense,
+      },
+
+      statGrowth: {
+        maxHp: 10,
+        attack: 2,
+        defense: 1,
+      },
+    };
+
+    this.progressionSystem =
+      new ProgressionSystem();
 
     console.log('[GameState] Initial state:', state);
 
@@ -147,6 +173,7 @@ export class GameScene extends Phaser.Scene {
         attack: 8,
         defense: 3,
       },
+      experienceReward: 25,
     });
 
     this.enemies.push(enemy);
@@ -221,9 +248,62 @@ export class GameScene extends Phaser.Scene {
       )
       .setScrollFactor(0);
 
+    this.progressionText =
+      this.add.text(
+        20,
+        50,
+        '',
+        {
+          fontSize: '20px',
+          color: '#ffffff',
+        },
+      );
+
+    this.progressionText.setScrollFactor(0);
   }
 
+  private processEnemyRewards(): void {
+    for (const enemy of this.enemies) {
+      const experience =
+        enemy.claimExperienceReward();
 
+      if (experience <= 0) {
+        continue;
+      }
+
+      const leveledUp =
+        this.progressionSystem.addExperience(
+          this.progressionState,
+          experience,
+        );
+
+      this.gameStateManager.updatePlayerProgression(
+        this.progressionState.level,
+        this.progressionState.experience,
+        this.progressionState.stats,
+      );
+
+      this.updateProgressionHud();
+
+      console.log(
+        `[Progression] Received ${experience} EXP.`,
+      );
+
+      if (leveledUp) {
+        console.log(
+          `[Progression] Level Up! Level ${this.progressionState.level}.`,
+        );
+      }
+    }
+  }
+
+  private updateProgressionHud(): void {
+    this.progressionText.setText(
+      `Level: ${this.progressionState.level}    ` +
+      `EXP: ${this.progressionState.experience} / ` +
+      `${this.progressionState.experienceToNextLevel}`,
+    );
+  }
 
   update(): void {
     this.movementSystem.update();
@@ -232,6 +312,8 @@ export class GameScene extends Phaser.Scene {
       this.player,
       this.enemies,
     );
+
+    this.processEnemyRewards();
   }
 
 }

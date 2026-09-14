@@ -16,6 +16,9 @@ export class Enemy
 
     private readonly combatStats: CombatStats;
 
+    private readonly experienceReward: number;
+
+    private experienceRewarded = false;
     private hpText!: Phaser.GameObjects.Text;
 
     constructor(
@@ -32,6 +35,7 @@ export class Enemy
         this.enemyId = state.id;
         this.hp = state.hp;
         this.maxHp = state.maxHp;
+        this.experienceReward = state.experienceReward;
         this.combatStats = state.combatStats;
 
         scene.add.existing(this);
@@ -66,6 +70,10 @@ export class Enemy
         return this.maxHp;
     }
 
+    public getExperienceReward(): number {
+        return this.experienceReward;
+    }
+
     public getPosition(): {
         x: number;
         y: number;
@@ -74,6 +82,20 @@ export class Enemy
             x: this.x,
             y: this.y,
         };
+    }
+
+    public claimExperienceReward(): number {
+        if (this.experienceRewarded) {
+            return 0;
+        }
+
+        if (!this.isDefeated()) {
+            return 0;
+        }
+
+        this.experienceRewarded = true;
+
+        return this.experienceReward;
     }
 
     public getCombatStats(): CombatStats {

@@ -52,4 +52,26 @@ export class GameStateManager {
   public getState(): GameState {
     return this.state;
   }
+
+  public updatePlayerProgression(
+    level: number,
+    experience: number,
+    stats: {
+      maxHp: number;
+      attack: number;
+      defense: number;
+    },
+  ): void {
+    this.state.player.level = level;
+    this.state.player.experience = experience;
+
+    this.state.player.stats.maxHp =
+      stats.maxHp;
+
+    this.state.player.stats.attack =
+      stats.attack;
+
+    this.state.player.stats.defense =
+      stats.defense;
+  }
 }
