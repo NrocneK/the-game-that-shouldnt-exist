@@ -1,17 +1,20 @@
 import Phaser from 'phaser';
 
 import { Player } from '../entities/player/Player';
+import { Enemy } from '../entities/enemy/Enemy';
 import { GameStateManager } from '../systems/state/GameStateManager';
 import { MovementSystem } from '../systems/movement/MovementSystem';
 import { CameraSystem } from '../systems/world/CameraSystem';
-
+import { PlayerCombatSystem } from '../systems/combat/PlayerCombatSystem';
 
 
 export class GameScene extends Phaser.Scene {
   private gameStateManager!: GameStateManager;
   private movementSystem!: MovementSystem;
+  private playerCombatSystem!: PlayerCombatSystem;
 
   private player!: Player;
+  private enemies: Enemy[] = [];
 
   private showPrototypeComplete(): void {
     this.movementSystem.disable();
@@ -132,6 +135,21 @@ export class GameScene extends Phaser.Scene {
 
     this.player = new Player(this, state.player);
 
+    const enemy = new Enemy(this, {
+      id: 'test_enemy',
+      position: {
+        x: 600,
+        y: 500,
+      },
+      hp: 40,
+      maxHp: 40,
+      combatStats: {
+        attack: 8,
+        defense: 3,
+      },
+    });
+
+    this.enemies.push(enemy);
 
     this.physics.add.overlap(
       this.player,
@@ -154,6 +172,15 @@ export class GameScene extends Phaser.Scene {
       this,
       this.player,
     );
+
+    this.playerCombatSystem =
+      new PlayerCombatSystem(
+        this,
+        {
+          attack: state.player.stats.attack,
+          defense: state.player.stats.defense,
+        },
+      );
 
     this.physics.add.collider(this.player, ground);
 
@@ -186,7 +213,7 @@ export class GameScene extends Phaser.Scene {
       .text(
         20,
         20,
-        '← → Move    SPACE Jump',
+        '← → Move    SPACE Jump    A Attack',
         {
           fontSize: '20px',
           color: '#ffffff',
@@ -200,6 +227,11 @@ export class GameScene extends Phaser.Scene {
 
   update(): void {
     this.movementSystem.update();
+
+    this.playerCombatSystem.update(
+      this.player,
+      this.enemies,
+    );
   }
 
 }
