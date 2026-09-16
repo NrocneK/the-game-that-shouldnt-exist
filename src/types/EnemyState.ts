@@ -1,3 +1,5 @@
+import type { LootItem } from './loot/LootItem';
+
 export interface EnemyState {
     id: string;
 
@@ -15,4 +17,5 @@ export interface EnemyState {
     };
 
     experienceReward: number;
+    loot: LootItem[];
 }

@@ -1,4 +1,6 @@
 import type { GameState } from '../../types/GameState';
+import type { InventoryItem } from '../../types/inventory/InventoryItem';
+import type { EquipmentState } from '../../types/equipment/EquipmentState';
 
 export class GameStateManager {
   private state: GameState;
@@ -10,40 +12,27 @@ export class GameStateManager {
   private createInitialState(): GameState {
     return {
       player: {
-        position: {
-          x: 200,
-          y: 500,
-        },
-
+        position: { x: 200, y: 500 },
         hp: 100,
-
         level: 1,
-
         experience: 0,
-
         stats: {
           maxHp: 100,
           attack: 10,
           defense: 5,
           speed: 200,
         },
-
         inventory: [],
-
         equipment: {
           weapon: null,
           armor: null,
           accessory: null,
         },
       },
-
       world: {
         currentArea: 'StartingForest',
-
         storyFlags: {},
-
         questStates: {},
-
         npcStates: {},
       },
     };
@@ -64,14 +53,20 @@ export class GameStateManager {
   ): void {
     this.state.player.level = level;
     this.state.player.experience = experience;
+    this.state.player.stats.maxHp = stats.maxHp;
+    this.state.player.stats.attack = stats.attack;
+    this.state.player.stats.defense = stats.defense;
+  }
 
-    this.state.player.stats.maxHp =
-      stats.maxHp;
+  public updatePlayerInventory(
+    inventory: InventoryItem[],
+  ): void {
+    this.state.player.inventory = inventory.map((item) => ({ ...item }));
+  }
 
-    this.state.player.stats.attack =
-      stats.attack;
-
-    this.state.player.stats.defense =
-      stats.defense;
+  public updatePlayerEquipment(
+    equipment: EquipmentState,
+  ): void {
+    this.state.player.equipment = { ...equipment };
   }
 }

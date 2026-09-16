@@ -4,6 +4,7 @@ import type { EnemyState } from '../../types/EnemyState';
 import type { CombatStats } from '../../types/combat/CombatStats';
 import type { Damageable } from '../../types/combat/Damageable';
 import type { AttackTarget } from '../../types/combat/AttackTarget';
+import type { LootItem } from '../../types/loot/LootItem';
 
 export class Enemy
     extends Phaser.Physics.Arcade.Sprite
@@ -17,8 +18,10 @@ export class Enemy
     private readonly combatStats: CombatStats;
 
     private readonly experienceReward: number;
+    private readonly loot: LootItem[];
 
     private experienceRewarded = false;
+    private lootRewarded = false;
     private hpText!: Phaser.GameObjects.Text;
 
     constructor(
@@ -36,6 +39,7 @@ export class Enemy
         this.hp = state.hp;
         this.maxHp = state.maxHp;
         this.experienceReward = state.experienceReward;
+        this.loot = state.loot.map((item) => ({ ...item }));
         this.combatStats = state.combatStats;
 
         scene.add.existing(this);
@@ -72,6 +76,16 @@ export class Enemy
 
     public getExperienceReward(): number {
         return this.experienceReward;
+    }
+
+    public claimLoot(): LootItem[] {
+        if (this.lootRewarded || !this.isDefeated()) {
+            return [];
+        }
+
+        this.lootRewarded = true;
+
+        return this.loot.map((item) => ({ ...item }));
     }
 
     public getPosition(): {

@@ -1,9 +1,0 @@
-Bag Store
-https://my-bagstore.vercel.app/
-
-My HRMS
-https://my-hrms-one.vercel.app/
-
-WMS Pro
-https://wms-pro-pnr.vercel.app/
-
