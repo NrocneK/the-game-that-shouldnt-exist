@@ -3,7 +3,7 @@ import type { EnemyState } from '../../types/EnemyState';
 export const testEnemyState: EnemyState = {
   id: 'test_enemy',
   position: {
-    x: 600,
+    x: 850,
     y: 500,
   },
   hp: 40,
