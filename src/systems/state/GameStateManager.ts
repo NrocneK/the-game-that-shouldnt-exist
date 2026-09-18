@@ -34,6 +34,7 @@ export class GameStateManager {
         storyFlags: {},
         questStates: {},
         npcStates: {},
+        triggeredAnomalies: [],
       },
     };
   }

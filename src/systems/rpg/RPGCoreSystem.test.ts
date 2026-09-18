@@ -20,6 +20,7 @@ const gameState: GameState = {
     storyFlags: {},
     questStates: {},
     npcStates: {},
+    triggeredAnomalies: [],
   },
 };
 

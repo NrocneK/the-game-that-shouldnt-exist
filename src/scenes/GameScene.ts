@@ -3,29 +3,29 @@ import Phaser from 'phaser';
 import { Player } from '../entities/player/Player';
 import { Enemy } from '../entities/enemy/Enemy';
 import { NPC } from '../entities/npc/NPC';
+import { AnomalyMarker } from '../entities/world/AnomalyMarker';
 
 import { GameStateManager } from '../systems/state/GameStateManager';
 import { MovementSystem } from '../systems/movement/MovementSystem';
 import { CameraSystem } from '../systems/world/CameraSystem';
 import { InteractionSystem } from '../systems/world/InteractionSystem';
-
 import { PlayerCombatSystem } from '../systems/combat/PlayerCombatSystem';
 import { RPGCoreSystem } from '../systems/rpg/RPGCoreSystem';
-
 import { DialogueSystem } from '../systems/dialogue/DialogueSystem';
 import { QuestSystem } from '../systems/quest/QuestSystem';
+import { WorldStateSystem } from '../systems/state/WorldStateSystem';
+import { AnomalySystem } from '../systems/anomaly/AnomalySystem';
 
 import type { ProgressionState } from '../types/progression/ProgressionState';
 import type { LootState } from '../types/loot/LootState';
 
 import { itemDefinitions } from '../data/items/itemDefinitions';
 import { testEnemyState } from '../data/enemies/testEnemy';
-
 import { startingForest } from '../data/world/startingForest';
 import { minersRequest } from '../data/quests/minersRequest';
-
 import { oldMinerDialogues } from '../data/npcs/oldMiner';
 import { oldMinerState } from '../data/npcs/oldMinerState';
+import { forestAnomaly } from '../data/anomalies/forestAnomaly';
 
 export class GameScene extends Phaser.Scene {
   private gameStateManager!: GameStateManager;
@@ -41,6 +41,10 @@ export class GameScene extends Phaser.Scene {
   private questSystem!: QuestSystem;
 
   private rpgCoreSystem!: RPGCoreSystem;
+
+  private worldStateSystem!: WorldStateSystem;
+
+  private anomalySystem!: AnomalySystem;
 
   private progressionState!: ProgressionState;
 
@@ -87,6 +91,20 @@ export class GameScene extends Phaser.Scene {
 
     const state =
       this.gameStateManager.getState();
+
+    this.worldStateSystem =
+      new WorldStateSystem(
+        this.gameStateManager.getState().world,
+      );
+
+    this.anomalySystem =
+      new AnomalySystem(
+        this.worldStateSystem,
+      );
+
+    this.anomalySystem.register(
+      forestAnomaly,
+    );
 
     this.progressionState = {
       level: state.player.level,
@@ -531,6 +549,15 @@ export class GameScene extends Phaser.Scene {
   }
 
   private getMinerDialogueId(): string {
+    if (
+      this.worldStateSystem.hasTriggeredAnomaly(
+        'forest_anomaly_01',
+      )
+    ) {
+      return oldMinerDialogues
+        .anomaly.id;
+    }
+
     const status =
       this.questSystem.getStatus(
         minersRequest.id,
@@ -660,6 +687,27 @@ export class GameScene extends Phaser.Scene {
       state.world.storyFlags[
         'miner_request_completed'
       ] = true;
+
+      this.worldStateSystem.setStoryFlag(
+        'forest_anomaly_01',
+      );
+
+      const anomaly =
+        this.anomalySystem.trigger(
+          'forest_anomaly_01',
+        );
+
+      if (anomaly) {
+        console.log(
+          `[World] ${anomaly.worldReaction}`,
+        );
+
+        new AnomalyMarker(
+          this,
+          850,
+          300,
+        );
+      }
 
       console.log(
         '[World] Anomaly flag set: forest_anomaly_01',

@@ -59,4 +59,23 @@ export const oldMinerDialogues: Record<
             },
         ],
     },
+
+    anomaly: {
+        id: 'old_miner_anomaly',
+
+        lines: [
+            {
+                speaker: 'Old Miner',
+                text: `You see it too, don't you?`,
+            },
+            {
+                speaker: 'Old Miner',
+                text: 'That thing in the forest was not there before.',
+            },
+            {
+                speaker: 'Old Miner',
+                text: 'Do not go near it yet.',
+            },
+        ],
+    },
 };
