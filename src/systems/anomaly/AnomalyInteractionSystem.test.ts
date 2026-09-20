@@ -34,6 +34,10 @@ const anomaly: AnomalyDefinition = {
     requiredStoryFlag: 'test_flag',
     worldReaction: 'Test reaction',
     state: 'inactive',
+    investigationConsequences: {
+        storyFlags: [],
+        npcStates: {},
+    },
 };
 
 anomalySystem.register(anomaly);

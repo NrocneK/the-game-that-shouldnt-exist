@@ -15,4 +15,14 @@ export const forestAnomaly: AnomalyDefinition = {
         'A strange marker has appeared in the forest.',
 
     state: 'inactive',
+
+    investigationConsequences: {
+        storyFlags: [
+            'forest_anomaly_01_investigated',
+            'starting_forest_changed',
+        ],
+        npcStates: {
+            old_miner: 'anomaly_investigated',
+        },
+    },
 };

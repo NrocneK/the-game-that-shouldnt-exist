@@ -1,4 +1,5 @@
 import type { AnomalyState } from './AnomalyState';
+import type { AnomalyInvestigationConsequences } from './AnomalyInvestigationConsequences';
 
 export interface AnomalyDefinition {
     id: string;
@@ -7,4 +8,5 @@ export interface AnomalyDefinition {
     requiredStoryFlag: string;
     worldReaction: string;
     state: AnomalyState;
+    investigationConsequences: AnomalyInvestigationConsequences;
 }

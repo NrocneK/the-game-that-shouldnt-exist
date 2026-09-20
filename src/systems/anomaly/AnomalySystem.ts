@@ -1,6 +1,7 @@
 import type { AnomalyDefinition } from '../../types/anomaly/AnomalyDefinition';
 import type { AnomalyState } from '../../types/anomaly/AnomalyState';
 import { WorldStateSystem } from '../state/WorldStateSystem';
+import { AnomalyConsequenceSystem } from './AnomalyConsequenceSystem';
 
 export class AnomalySystem {
     private readonly definitions =
@@ -11,11 +12,18 @@ export class AnomalySystem {
 
     private readonly worldStateSystem: WorldStateSystem;
 
+    private readonly consequenceSystem: AnomalyConsequenceSystem;
+
     constructor(
         worldStateSystem: WorldStateSystem,
     ) {
         this.worldStateSystem =
             worldStateSystem;
+
+        this.consequenceSystem =
+            new AnomalyConsequenceSystem(
+                worldStateSystem,
+            );
     }
 
     public register(
@@ -126,6 +134,15 @@ export class AnomalySystem {
         this.worldStateSystem.setStoryFlag(
             `${anomalyId}_investigated`,
         );
+
+        const definition =
+            this.definitions.get(anomalyId);
+
+        if (definition) {
+            this.consequenceSystem.apply(
+                definition.investigationConsequences,
+            );
+        }
 
         console.log(
             `[Anomaly] Investigated: ${anomalyId}`,

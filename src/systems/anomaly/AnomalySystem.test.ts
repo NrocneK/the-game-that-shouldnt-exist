@@ -26,6 +26,14 @@ const anomaly: AnomalyDefinition = {
     requiredStoryFlag: 'test_flag',
     worldReaction: 'Test reaction',
     state: 'inactive',
+    investigationConsequences: {
+        storyFlags: [
+            'test_anomaly_consequence',
+        ],
+        npcStates: {
+            test_npc: 'concerned',
+        },
+    },
 };
 
 anomalySystem.register(anomaly);
@@ -188,7 +196,33 @@ if (
 console.log('PASS');
 
 console.log(
-    'Test 8: anomaly cannot be investigated twice',
+    'Test 8: investigation applies configured consequences',
+);
+
+if (
+    !worldStateSystem.hasStoryFlag(
+        'test_anomaly_consequence',
+    )
+) {
+    throw new Error(
+        'FAIL: investigation consequence story flag was not set.',
+    );
+}
+
+if (
+    worldStateSystem.getNpcState(
+        'test_npc',
+    ) !== 'concerned'
+) {
+    throw new Error(
+        'FAIL: investigation consequence NPC state was not set.',
+    );
+}
+
+console.log('PASS');
+
+console.log(
+    'Test 9: anomaly cannot be investigated twice',
 );
 
 if (
@@ -204,7 +238,7 @@ if (
 console.log('PASS');
 
 console.log(
-    'Test 9: unknown anomaly fails safely',
+    'Test 10: unknown anomaly fails safely',
 );
 
 if (

@@ -565,9 +565,9 @@ export class GameScene extends Phaser.Scene {
 
   private getMinerDialogueId(): string {
     if (
-      this.worldStateSystem.hasStoryFlag(
-        'forest_anomaly_01_investigated',
-      )
+      this.worldStateSystem.getNpcState(
+        oldMinerState.id,
+      ) === 'anomaly_investigated'
     ) {
       return oldMinerDialogues
         .investigated.id;
