@@ -1,9 +1,13 @@
 import type { AnomalyDefinition } from '../../types/anomaly/AnomalyDefinition';
+import type { AnomalyState } from '../../types/anomaly/AnomalyState';
 import { WorldStateSystem } from '../state/WorldStateSystem';
 
 export class AnomalySystem {
     private readonly definitions =
         new Map<string, AnomalyDefinition>();
+
+    private readonly states =
+        new Map<string, AnomalyState>();
 
     private readonly worldStateSystem: WorldStateSystem;
 
@@ -21,6 +25,11 @@ export class AnomalySystem {
             definition.id,
             definition,
         );
+
+        this.states.set(
+            definition.id,
+            definition.state,
+        );
     }
 
     public getDefinition(
@@ -29,6 +38,15 @@ export class AnomalySystem {
         return (
             this.definitions.get(anomalyId) ??
             null
+        );
+    }
+
+    public getState(
+        anomalyId: string,
+    ): AnomalyState {
+        return (
+            this.states.get(anomalyId) ??
+            'inactive'
         );
     }
 
@@ -43,9 +61,8 @@ export class AnomalySystem {
         }
 
         if (
-            this.worldStateSystem.hasTriggeredAnomaly(
-                anomalyId,
-            )
+            this.getState(anomalyId) !==
+            'inactive'
         ) {
             return false;
         }
@@ -71,6 +88,11 @@ export class AnomalySystem {
             return null;
         }
 
+        this.states.set(
+            anomalyId,
+            'active',
+        );
+
         this.worldStateSystem.markAnomalyTriggered(
             anomalyId,
         );
@@ -86,11 +108,47 @@ export class AnomalySystem {
         return definition;
     }
 
+    public investigate(
+        anomalyId: string,
+    ): boolean {
+        if (
+            this.getState(anomalyId) !==
+            'active'
+        ) {
+            return false;
+        }
+
+        this.states.set(
+            anomalyId,
+            'investigated',
+        );
+
+        this.worldStateSystem.setStoryFlag(
+            `${anomalyId}_investigated`,
+        );
+
+        console.log(
+            `[Anomaly] Investigated: ${anomalyId}`,
+        );
+
+        return true;
+    }
+
     public isTriggered(
         anomalyId: string,
     ): boolean {
-        return this.worldStateSystem.hasTriggeredAnomaly(
-            anomalyId,
+        return (
+            this.getState(anomalyId) !==
+            'inactive'
+        );
+    }
+
+    public isInvestigated(
+        anomalyId: string,
+    ): boolean {
+        return (
+            this.getState(anomalyId) ===
+            'investigated'
         );
     }
 }

@@ -15,6 +15,7 @@ import { DialogueSystem } from '../systems/dialogue/DialogueSystem';
 import { QuestSystem } from '../systems/quest/QuestSystem';
 import { WorldStateSystem } from '../systems/state/WorldStateSystem';
 import { AnomalySystem } from '../systems/anomaly/AnomalySystem';
+import { AnomalyInteractionSystem } from '../systems/anomaly/AnomalyInteractionSystem';
 
 import type { ProgressionState } from '../types/progression/ProgressionState';
 import type { LootState } from '../types/loot/LootState';
@@ -45,6 +46,15 @@ export class GameScene extends Phaser.Scene {
   private worldStateSystem!: WorldStateSystem;
 
   private anomalySystem!: AnomalySystem;
+
+  private anomalyInteractionSystem!: AnomalyInteractionSystem;
+
+  private anomalyMarker?: AnomalyMarker;
+
+  private readonly anomalyPosition = {
+    x: 850,
+    y: 500,
+  };
 
   private progressionState!: ProgressionState;
 
@@ -100,6 +110,11 @@ export class GameScene extends Phaser.Scene {
     this.anomalySystem =
       new AnomalySystem(
         this.worldStateSystem,
+      );
+
+    this.anomalyInteractionSystem =
+      new AnomalyInteractionSystem(
+        this.anomalySystem,
       );
 
     this.anomalySystem.register(
@@ -550,6 +565,15 @@ export class GameScene extends Phaser.Scene {
 
   private getMinerDialogueId(): string {
     if (
+      this.worldStateSystem.hasStoryFlag(
+        'forest_anomaly_01_investigated',
+      )
+    ) {
+      return oldMinerDialogues
+        .investigated.id;
+    }
+
+    if (
       this.worldStateSystem.hasTriggeredAnomaly(
         'forest_anomaly_01',
       )
@@ -608,6 +632,7 @@ export class GameScene extends Phaser.Scene {
     ) {
       return;
     }
+
 
     /*
      * Start the appropriate dialogue.
@@ -702,21 +727,21 @@ export class GameScene extends Phaser.Scene {
           `[World] ${anomaly.worldReaction}`,
         );
 
-        new AnomalyMarker(
-          this,
-          850,
-          300,
+        this.anomalyMarker =
+          new AnomalyMarker(
+            this,
+            this.anomalyPosition.x,
+            this.anomalyPosition.y,
+          );
+
+        console.log(
+          '[World] Anomaly flag set: forest_anomaly_01',
         );
       }
 
-      console.log(
-        '[World] Anomaly flag set: forest_anomaly_01',
-      );
+      this.updateAllHud();
     }
-
-    this.updateAllHud();
   }
-
   private updateDialogueHud(): void {
     const line =
       this.dialogueSystem
@@ -935,6 +960,7 @@ export class GameScene extends Phaser.Scene {
       return;
     }
 
+
     this.movementSystem.update();
 
     this.playerCombatSystem.update(
@@ -956,6 +982,24 @@ export class GameScene extends Phaser.Scene {
             this.player,
             this.npcs,
           );
+
+      const anomalyInvestigated =
+        this.anomalyInteractionSystem.interact(
+          'forest_anomaly_01',
+          this.player.x,
+          this.player.y,
+          this.anomalyPosition.x,
+          this.anomalyPosition.y,
+          70,
+        );
+
+      if (anomalyInvestigated) {
+        console.log(
+          '[World] Forest anomaly investigated.',
+        );
+        this.anomalyMarker?.setInvestigatedState();
+        return;
+      }
 
       if (npc) {
         this.interactWithNpc(npc);

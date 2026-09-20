@@ -78,4 +78,23 @@ export const oldMinerDialogues: Record<
             },
         ],
     },
+
+    investigated: {
+        id: 'old_miner_anomaly_investigated',
+
+        lines: [
+            {
+                speaker: 'Old Miner',
+                text: 'You touched it...',
+            },
+            {
+                speaker: 'Old Miner',
+                text: 'Now the forest feels different.',
+            },
+            {
+                speaker: 'Old Miner',
+                text: 'Whatever that thing is, it knows you are here.',
+            },
+        ],
+    },
 };

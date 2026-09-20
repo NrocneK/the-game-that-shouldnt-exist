@@ -13,4 +13,6 @@ export const forestAnomaly: AnomalyDefinition = {
 
     worldReaction:
         'A strange marker has appeared in the forest.',
+
+    state: 'inactive',
 };

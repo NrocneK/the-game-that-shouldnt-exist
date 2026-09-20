@@ -20,14 +20,12 @@ const anomalySystem =
     );
 
 const anomaly: AnomalyDefinition = {
-    id: 'forest_anomaly_01',
-    name: 'The Forest That Should Not Be Here',
-    description:
-        'A strange presence has appeared in the Starting Forest.',
-    requiredStoryFlag:
-        'forest_anomaly_01',
-    worldReaction:
-        'A strange marker has appeared in the forest.',
+    id: 'test_anomaly',
+    name: 'Test Anomaly',
+    description: 'Test anomaly',
+    requiredStoryFlag: 'test_flag',
+    worldReaction: 'Test reaction',
+    state: 'inactive',
 };
 
 anomalySystem.register(anomaly);
@@ -38,7 +36,7 @@ console.log(
 
 if (
     anomalySystem.getDefinition(
-        'forest_anomaly_01',
+        'test_anomaly',
     ) !== anomaly
 ) {
     throw new Error(
@@ -54,7 +52,7 @@ console.log(
 
 if (
     anomalySystem.canTrigger(
-        'forest_anomaly_01',
+        'test_anomaly',
     )
 ) {
     throw new Error(
@@ -69,12 +67,12 @@ console.log(
 );
 
 worldStateSystem.setStoryFlag(
-    'forest_anomaly_01',
+    'test_flag',
 );
 
 if (
     !anomalySystem.canTrigger(
-        'forest_anomaly_01',
+        'test_anomaly',
     )
 ) {
     throw new Error(
@@ -90,12 +88,22 @@ console.log(
 
 const triggered =
     anomalySystem.trigger(
-        'forest_anomaly_01',
+        'test_anomaly',
     );
 
 if (triggered !== anomaly) {
     throw new Error(
         'FAIL: anomaly trigger did not return the correct definition.',
+    );
+}
+
+if (
+    anomalySystem.getState(
+        'test_anomaly',
+    ) !== 'active'
+) {
+    throw new Error(
+        'FAIL: anomaly state should be active after trigger.',
     );
 }
 
@@ -107,7 +115,7 @@ console.log(
 
 if (
     !worldStateSystem.hasTriggeredAnomaly(
-        'forest_anomaly_01',
+        'test_anomaly',
     )
 ) {
     throw new Error(
@@ -123,7 +131,7 @@ console.log(
 
 if (
     anomalySystem.canTrigger(
-        'forest_anomaly_01',
+        'test_anomaly',
     )
 ) {
     throw new Error(
@@ -133,7 +141,7 @@ if (
 
 if (
     anomalySystem.trigger(
-        'forest_anomaly_01',
+        'test_anomaly',
     ) !== null
 ) {
     throw new Error(
@@ -144,7 +152,59 @@ if (
 console.log('PASS');
 
 console.log(
-    'Test 7: unknown anomaly fails safely',
+    'Test 7: anomaly investigation',
+);
+
+if (
+    !anomalySystem.investigate(
+        'test_anomaly',
+    )
+) {
+    throw new Error(
+        'FAIL: active anomaly should be investigatable.',
+    );
+}
+
+if (
+    anomalySystem.getState(
+        'test_anomaly',
+    ) !== 'investigated'
+) {
+    throw new Error(
+        'FAIL: anomaly state should be investigated.',
+    );
+}
+
+if (
+    !worldStateSystem.hasStoryFlag(
+        'test_anomaly_investigated',
+    )
+) {
+    throw new Error(
+        'FAIL: investigation story flag was not set.',
+    );
+}
+
+console.log('PASS');
+
+console.log(
+    'Test 8: anomaly cannot be investigated twice',
+);
+
+if (
+    anomalySystem.investigate(
+        'test_anomaly',
+    )
+) {
+    throw new Error(
+        'FAIL: investigated anomaly should not be investigated twice.',
+    );
+}
+
+console.log('PASS');
+
+console.log(
+    'Test 9: unknown anomaly fails safely',
 );
 
 if (
@@ -174,6 +234,16 @@ if (
 ) {
     throw new Error(
         'FAIL: unknown anomaly trigger should return null.',
+    );
+}
+
+if (
+    anomalySystem.investigate(
+        'unknown_anomaly',
+    )
+) {
+    throw new Error(
+        'FAIL: unknown anomaly should not be investigatable.',
     );
 }
 
