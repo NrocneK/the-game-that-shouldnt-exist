@@ -1,3 +1,9 @@
+export interface WorldStateVisualDefinition {
+    storyFlag: string;
+    backgroundColor: number;
+    statusText: string;
+}
+
 export interface WorldAreaDefinition {
     id: string;
     name: string;
@@ -7,4 +13,5 @@ export interface WorldAreaDefinition {
         x: number;
         y: number;
     };
+    worldStateVisual?: WorldStateVisualDefinition;
 }

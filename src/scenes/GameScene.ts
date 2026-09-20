@@ -9,6 +9,7 @@ import { GameStateManager } from '../systems/state/GameStateManager';
 import { MovementSystem } from '../systems/movement/MovementSystem';
 import { CameraSystem } from '../systems/world/CameraSystem';
 import { InteractionSystem } from '../systems/world/InteractionSystem';
+import { WorldStateVisualSystem } from '../systems/world/WorldStateVisualSystem';
 import { PlayerCombatSystem } from '../systems/combat/PlayerCombatSystem';
 import { RPGCoreSystem } from '../systems/rpg/RPGCoreSystem';
 import { DialogueSystem } from '../systems/dialogue/DialogueSystem';
@@ -45,6 +46,8 @@ export class GameScene extends Phaser.Scene {
 
   private worldStateSystem!: WorldStateSystem;
 
+  private worldStateVisualSystem!: WorldStateVisualSystem;
+
   private anomalySystem!: AnomalySystem;
 
   private anomalyInteractionSystem!: AnomalyInteractionSystem;
@@ -67,6 +70,10 @@ export class GameScene extends Phaser.Scene {
   private equipmentText!: Phaser.GameObjects.Text;
 
   private questText!: Phaser.GameObjects.Text;
+
+  private worldStateText!: Phaser.GameObjects.Text;
+
+  private worldBackground!: Phaser.GameObjects.Rectangle;
 
   private dialogueBox!: Phaser.GameObjects.Rectangle;
 
@@ -105,6 +112,11 @@ export class GameScene extends Phaser.Scene {
     this.worldStateSystem =
       new WorldStateSystem(
         this.gameStateManager.getState().world,
+      );
+
+    this.worldStateVisualSystem =
+      new WorldStateVisualSystem(
+        this.worldStateSystem,
       );
 
     this.anomalySystem =
@@ -223,7 +235,7 @@ export class GameScene extends Phaser.Scene {
     /*
      * Background.
      */
-    this.add.rectangle(
+    this.worldBackground = this.add.rectangle(
       worldWidth / 2,
       worldHeight / 2,
       worldWidth,
@@ -409,6 +421,17 @@ export class GameScene extends Phaser.Scene {
         {
           fontSize: '18px',
           color: '#ffffff',
+        },
+      ).setScrollFactor(0);
+
+    this.worldStateText =
+      this.add.text(
+        20,
+        200,
+        '',
+        {
+          fontSize: '18px',
+          color: '#d7c7ff',
         },
       ).setScrollFactor(0);
   }
@@ -880,6 +903,21 @@ export class GameScene extends Phaser.Scene {
 
     const state =
       this.gameStateManager.getState();
+
+    const worldVisualState =
+      this.worldStateVisualSystem.getVisualState(
+        startingForest,
+        0x1a1a1a,
+        'World: Starting Forest',
+      );
+
+    this.worldBackground.setFillStyle(
+      worldVisualState.backgroundColor,
+    );
+
+    this.worldStateText.setText(
+      worldVisualState.statusText,
+    );
 
     this.progressionText.setText(
       `Level: ${state.player.level}    ` +

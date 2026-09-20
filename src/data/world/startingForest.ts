@@ -9,4 +9,9 @@ export const startingForest: WorldAreaDefinition = {
         x: 200,
         y: 500,
     },
+    worldStateVisual: {
+        storyFlag: 'starting_forest_changed',
+        backgroundColor: 0x241b35,
+        statusText: 'World: The forest feels different.',
+    },
 };
